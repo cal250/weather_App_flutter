@@ -11,7 +11,7 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
 
 //api key
-final _WeatherService = WeatherService(apikey);
+final _WeatherService = WeatherService('23474f85c62938615d08f2d30942d65e');
 Weather? _weather;
 
 //fetch weather
@@ -51,6 +51,19 @@ _fetchWeather();
 //weather animations
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return const Scaffold(
+      body:Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //city name 
+            Text(_Weather?.cityName??"loading city.."),
+          
+            //temperature
+            Text(_Weather?.temperature.round().toString() + 'celcius')
+          ],
+        ),
+      )
+    );
   }
 }
