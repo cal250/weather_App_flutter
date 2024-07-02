@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/weather_model.dart';
+import 'package:flutter_application_1/services/weather_service.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -9,61 +10,47 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
+  final WeatherService _weatherService =
+      WeatherService('23474f85c62938615d08f2d30942d65e');
+  Weather? _weather;
 
-//api key
-final _WeatherService = WeatherService('23474f85c62938615d08f2d30942d65e');
-Weather? _weather;
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeather();
+  }
 
-//fetch weather
+  _fetchWeather() async {
+    try {
+      // Get the current city name
+      String cityName = await _weatherService.getCurrentCity();
 
-_fetchWeather() async {
-  //get the current city 
-  String cityName = await _WeatherService.getCurrentcity();
-}
-//get weather for city
+      // Get weather for the city
+      Weather weather = await _weatherService.getWeather(cityName);
+      
+      setState(() {
+        _weather = weather;
+      });
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
+  }
 
-try {
-  final Weather = await _WeatherService.getWeather(cityName);
-  setState(() {
-    _weather = _weather;
-  });
-}
-
-//any errors
-catch (e){
-  print(e);
-}
-
-
-
-@override
-void initState(){
-  super.initState();
-
-  
-  //fetch weather on startup
-_fetchWeather();
-}
-
-
-
-
-//weather animations
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body:Center(
+    return Scaffold(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //city name 
-            Text(_Weather?.cityName??"loading city.."),
-          
-            //temperature
-            Text(_Weather?.temperature.round().toString() + 'celcius')
+            // City name
+            Text(_weather?.cityName ?? "Loading city..."),
+            // Temperature
+            Text('${(_weather?.temperature ?? 0).round()} Celsius'),
           ],
         ),
-      )
+      ),
     );
   }
 }
